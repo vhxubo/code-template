@@ -1,5 +1,13 @@
 import "@/styles/globals.css";
+import React from "react";
+import { ConfigProvider } from "antd";
 
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
-}
+import theme from "../theme/themeConfig";
+
+const App = ({ Component, pageProps }) => (
+  <ConfigProvider theme={theme}>
+    <Component {...pageProps} />
+  </ConfigProvider>
+);
+
+export default App;
