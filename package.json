@@ -9,15 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ant-design/cssinjs": "^1.24.0",
+    "antd": "6.0.0-alpha.3",
+    "handlebars": "^4.7.8",
+    "next": "15.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }
