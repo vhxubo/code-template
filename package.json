@@ -11,8 +11,8 @@
   "dependencies": {
     "@ant-design/cssinjs": "^1.24.0",
     "antd": "6.0.0-alpha.3",
-    "handlebars": "^4.7.8",
     "next": "15.5.4",
+    "nunjucks": "^3.2.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

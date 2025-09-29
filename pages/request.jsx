@@ -1,58 +1,86 @@
 import { Input, Button, Checkbox } from "antd";
 import { useState } from "react";
-import Handlebars from "handlebars";
+import * as nunjucks from "nunjucks";
 
-const template = Handlebars.compile(
-  `
-import request from '@/utils/request'
+nunjucks.configure({
+  trimBlocks: true, // 自动移除块周围的换行
+  lstripBlocks: true, // 移除块开始位置的空白
+});
+const placeholder = `/exposed/land post updateLand 更新数据
+/exposed/land post updateLand`;
+const templateStr = `
+import request from "@/utils/request"
 
-  {{#each list}}
-export function {{name}}(params) {
+{% for item in list %}
+{% if item.comment %}
+/**
+ * {{item.comment}}
+ */
+{% endif %}
+export function {{ item.name }}(params) {
   return request({
-    url: "{{url}}",
-    method: "{{method}}",
-    {{#if isData}}
+    url: "{{ item.url }}",
+    method: "{{ item.method }}",
+    {% if item.method == 'post' %}
     data: params,
-    {{else}}
+    {% else %}
     params,
-    {{/if}}
+    {% endif %}
   });
 }
 
-{{/each}}
-`,
-);
-const onChange = (el) => {
-  const text = el.target.value;
-  if (!text) {
-    setColumns(() => []);
-    return;
-  }
-  const list = [];
-  text.split("\n").forEach((item) => {
-    let [url, method] = item.split(" ");
-    list.push({ url, name: url.split() });
-  });
-  setColumns(() => list);
-};
-
-const handleSubmit = () => {
-  const text = template({
-    list: [
-      { name: "111", url: "hddd/ddd", isData: false, method: 'get' },
-      { name: "111", url: "hddd/ddd", isData: true, method: 'post' },
-    ],
-  });
-  console.log("text:", text);
-};
+{% endfor %}
+`;
 
 const request = () => {
+  const [list, setList] = useState([]);
+  const [value, setValue] = useState("");
+  const [result, setResult] = useState("");
+  const onChange = (el) => {
+    const text = el.target.value;
+    setValue(text);
+  };
+
+  const handleSubmit = () => {
+    const _list = [];
+    value.split("\n").forEach((item) => {
+      const params = item.split(" ");
+      let url = params[0];
+      let name = url.split("/")[url.split("/").length - 1];
+      let comment = "";
+      if (params.length >= 3) {
+        name = params[2];
+      }
+      if (params.length >= 4) {
+        comment = params[3];
+      }
+      let method = params[1] || "get";
+      _list.push({
+        url,
+        name,
+        method,
+        comment,
+      });
+    });
+    const text = nunjucks.renderString(templateStr, {
+      list: _list,
+    });
+    setResult(text);
+  };
+
   return (
     <div>
-      <Input.TextArea rows={10}></Input.TextArea>
-      <Button type="primary" onClick={handleSubmit}>
+      <Input.TextArea
+        rows={10}
+        onChange={onChange}
+        placeholder={placeholder}
+      ></Input.TextArea>
+      <Button type="primary" onClick={handleSubmit} disabled={!value}>
         生成
       </Button>
+      <pre>
+        <code>{result}</code>
+      </pre>
     </div>
   );
 };
